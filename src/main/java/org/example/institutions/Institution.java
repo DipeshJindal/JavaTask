@@ -5,6 +5,7 @@ import org.example.guidelines.InstituteGuidelines;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public class Institution implements InstituteGuidelines {
@@ -36,9 +37,9 @@ public class Institution implements InstituteGuidelines {
     }
 
     private void notifyExchange(String exchangeName, String shareName, int quantity) {
-        Stream<StockExchange> obj = getExchanges().stream().filter(o -> exchangeName.equals(o.getExchangeName()));
-        if (obj.count() != 0) {
-            StockExchange ex = obj.findFirst().get();
+        Optional<StockExchange> obj = getExchanges().stream().filter(o -> exchangeName.equals(o.getExchangeName())).findFirst();
+        if (obj.isPresent()) {
+            StockExchange ex = obj.get();
             ex.update(getName(), shareName ,quantity);
         }
     }

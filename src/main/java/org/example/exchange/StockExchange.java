@@ -6,6 +6,7 @@ import org.example.shares.Share;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public class StockExchange implements StockExchangeGuidelines {
@@ -33,6 +34,7 @@ public class StockExchange implements StockExchangeGuidelines {
 
     @Override
     public void registerInstitutions(List<Institution> lst) {
+        for(Institution a: lst) a.registerExchange(this);
         institutions.addAll(lst);
     }
 
@@ -43,32 +45,33 @@ public class StockExchange implements StockExchangeGuidelines {
 
     @Override
     public void changePrice(String share, int p) {
-        Stream<Share> obj = getListOfShares().stream().filter(o -> share.equals(o.getName()));
-        if (obj.count() != 0) {
-            Share sh = obj.findFirst().get();
+        Optional<Share> obj = getListOfShares().stream().filter(o -> share.equals(o.getName())).findFirst();
+        if (obj.isPresent()) {
+            Share sh = obj.get();
             int oldPrice = sh.getPrice();
             sh.setPrice(p);
+            System.out.println(sh.getName());
             notifyInstitutions(share, oldPrice, p);
         } else {
             System.out.println("This Share is not Registered with Exchange");
         }
     }
 
-    public void update(String name,String share, int p) {
-        notifyInstitutions(name,share ,p);
+    public void update(String name, String share, int p) {
+        notifyInstitutions(name, share, p);
     }
 
     private void notifyInstitutions(String institutionName, String shareName, int quantity) {
-        for(Institution inst: getInstitutions()){
-            if(!inst.getName().equals(institutionName)){
-                inst.update(institutionName,shareName,quantity);
+        for (Institution inst : getInstitutions()) {
+            if (!inst.getName().equals(institutionName)) {
+                inst.update(institutionName, shareName, quantity);
             }
         }
     }
 
     private void notifyInstitutions(String stockName, int oldPrice, int newPrice) {
         for (Institution inst : institutions) {
-            inst.update(exchangeName,stockName, oldPrice, newPrice);
+            inst.update(exchangeName, stockName, oldPrice, newPrice);
         }
     }
 

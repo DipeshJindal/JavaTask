@@ -22,6 +22,6 @@ public class Main {
         exchange.registerShares(Arrays.asList(sh1, sh2, sh3, sh4));
 
 
-
+        exchange.changePrice("C1-Share-1",110);
     }
 }
